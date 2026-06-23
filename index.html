@@ -56,9 +56,11 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.5; }
+
   .top-bar { background: var(--bg); border-bottom: 1px solid var(--border); padding: 16px 16px 12px; position: sticky; top: 0; z-index: 100; }
   .top-bar h1 { font-size: 17px; font-weight: 600; }
   .top-bar p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
   .zones-scroll { display: flex; gap: 6px; overflow-x: auto; padding: 10px 16px; scrollbar-width: none; }
   .zones-scroll::-webkit-scrollbar { display: none; }
   .zone-chip { flex-shrink: 0; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 999px; }
@@ -67,11 +69,13 @@
   .z-z4m { background: var(--purple-light); color: var(--purple-dark); }
   .z-z4p { background: var(--blue-light); color: var(--blue-dark); }
   .z-z5 { background: var(--coral-light); color: var(--coral-dark); }
+
   .progress-summary { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--bg-surface); border-bottom: 1px solid var(--border); }
   .progress-summary span { font-size: 13px; color: var(--text-muted); }
   .progress-summary strong { font-size: 14px; color: var(--green); }
   .prog-mini { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
   .prog-mini-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.4s; }
+
   .week { border-bottom: 1px solid var(--border); }
   .week-hdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; background: var(--bg); user-select: none; gap: 10px; }
   .week-hdr-left { display: flex; flex-direction: column; gap: 3px; }
@@ -85,19 +89,23 @@
   .b-race { background: var(--coral-light); color: var(--coral-dark); }
   .chevron { font-size: 14px; color: var(--text-faint); transition: transform 0.2s; display: inline-block; }
   .collapsed .chevron { transform: rotate(-90deg); }
+
   .days-list { display: none; background: var(--bg-surface); }
   .days-list.open { display: block; }
+
   .day-row { display: flex; align-items: stretch; border-top: 1px solid var(--border); }
   .day-label-col { width: 44px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 12px 0 12px; gap: 2px; }
   .day-name { font-size: 11px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.5px; }
   .day-content { flex: 1; padding: 10px 14px 10px 0; display: flex; align-items: center; }
-  .pill { border-radius: var(--radius-sm); padding: 8px 11px; flex: 1; cursor: pointer; transition: opacity 0.15s; position: relative; }
+
+  .pill { border-radius: var(--radius-sm); padding: 8px 11px; flex: 1; cursor: pointer; transition: opacity 0.15s; active:opacity:0.7; position: relative; }
   .pill:active { opacity: 0.75; }
   .pill-cat { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; opacity: 0.75; }
   .pill-name { font-size: 13px; font-weight: 500; }
   .pill-done { opacity: 0.38; }
   .pill-done .pill-name { text-decoration: line-through; }
   .check-mark { position: absolute; top: 8px; right: 8px; font-size: 15px; opacity: 0.5; }
+
   .p-z2 { background: var(--green-light); color: var(--green-dark); }
   .p-interval { background: var(--purple-light); color: var(--purple-dark); }
   .p-long { background: var(--lime-light); color: var(--lime-dark); }
@@ -105,6 +113,8 @@
   .p-taper { background: var(--gray-light); color: var(--gray-dark); }
   .p-race { background: var(--coral-light); color: var(--coral-dark); }
   .p-vila { color: var(--text-faint); font-size: 13px; font-style: italic; padding: 12px 0; }
+
+  /* Modal */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--bg); border-radius: 20px 20px 0 0; padding: 0 0 env(safe-area-inset-bottom,16px); width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto; }
@@ -118,6 +128,261 @@
   .modal-val { font-size: 14px; font-weight: 500; }
   .modal-desc { margin-top: 14px; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
   .modal-close { display: block; width: 100%; margin-top: 20px; padding: 13px; background: var(--bg-surface); border: none; border-radius: var(--radius); font-size: 15px; font-weight: 500; color: var(--text); cursor: pointer; }
+
   .done-toggle { display: flex; gap: 10px; margin-top: 18px; }
   .done-btn { flex: 1; padding: 12px; border: none; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; }
-  .done-btn-check { background:
+  .done-btn-check { background: var(--green); color: #fff; }
+  .done-btn-uncheck { background: var(--gray-light); color: var(--text-muted); }
+
+  /* Move session */
+  .move-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .move-label { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 8px; }
+  .day-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+  .day-pick-btn { flex: 1; min-width: 36px; padding: 8px 4px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font-size: 12px; font-weight: 500; cursor: pointer; text-align: center; }
+  .day-pick-btn.current { background: var(--green-light); color: var(--green-dark); border-color: var(--green); }
+  .day-pick-btn:disabled { opacity: 0.3; cursor: default; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>Träningsschema halvmaraton</h1>
+  <p>29 jun 2026 → Helsingborg 6 sep → Malmö 3 okt</p>
+</div>
+
+<div class="zones-scroll">
+  <span class="zone-chip z-z2">Z2 LSD · 140–165 bpm · 6–8 min/km</span>
+  <span class="zone-chip z-z3">Z3 D · 165–178 bpm · 5:17–6:00/km</span>
+  <span class="zone-chip z-z4m">Z4− · 178–184 bpm · 5:00–5:17/km</span>
+  <span class="zone-chip z-z4p">Z4+ · 184–190 bpm · 4:40–5:00/km</span>
+  <span class="zone-chip z-z5">Z5 KI · 190–205 bpm · 4:23–4:40/km</span>
+</div>
+
+<div class="progress-summary">
+  <span>Totalt</span>
+  <strong id="total-done">0 / 0</strong>
+  <div class="prog-mini"><div class="prog-mini-fill" id="total-bar" style="width:0%"></div></div>
+  <span id="total-pct">0%</span>
+</div>
+
+<div id="schedule"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div class="modal-cat" id="m-cat"></div>
+      <div class="modal-title" id="m-title"></div>
+      <div id="m-rows"></div>
+      <div class="modal-desc" id="m-desc"></div>
+      <div class="done-toggle" id="m-done-toggle"></div>
+      <div class="move-section" id="m-move-section">
+        <div class="move-label">Flytta till annan dag</div>
+        <div class="day-picker" id="m-day-picker"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">Stäng</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS=['Mån','Tis','Ons','Tor','Fre','Lör','Sön'];
+
+const S={
+  vila:{label:'Vila',cat:'',cls:'p-vila',tip:null},
+  z2_40:{label:'Z2 löpning',cat:'Z2 bas',cls:'p-z2',tip:{tid:'40–50 min',puls:'140–165 bpm',fart:'6:00–8:00/km',desc:'Konversationstempo hela passet. Om du inte kan prata i hela meningar är farten för hög. Avsluta utan att vara trött.'}},
+  z2_55:{label:'Z2 löpning',cat:'Z2 bas',cls:'p-z2',tip:{tid:'55–65 min',puls:'140–165 bpm',fart:'6:00–8:00/km',desc:'Jämn aerob bas. Puls styr – inte fart. Om pulsen kryper mot 165, sänk farten direkt. Bygger din aeroba motor.'}},
+  z2_lang:{label:'Långpass Z2',cat:'Långpass',cls:'p-long',tip:{tid:'75–90 min',puls:'140–165 bpm',fart:'6:00–8:00/km',desc:'Progressivt upplägg: första 2/3 nedre Z2, sista tredjedelen mot 165. Ät/drick under passet för att träna tarmfunktion inför lopp.'}},
+  z2_extra_lang:{label:'Långpass Z2',cat:'Toppvolym',cls:'p-long',tip:{tid:'90–105 min',puls:'140–165 bpm',fart:'6:00–7:30/km',desc:'Toppvolympass – längsta passet i schemat. Negativ split: andra halvan något snabbare. Viktigt: ät 30–60g kolhydrater per timme.'}},
+  int_z4m_4x8:{label:'Intervall Z4−',cat:'Intervall',cls:'p-interval',tip:{tid:'~60 min total',puls:'178–184 bpm',fart:'5:00–5:17/km',desc:'WU 15 min Z2 → 4×8 min Z4− (2 min aktiv vila Z1) → CD 10 min Z2. Håll exakt samma fart alla fyra. Om puls skenar på sista draget: sänk farten nästa gång.'}},
+  int_z4p_4x6:{label:'Intervall Z4+',cat:'Intervall',cls:'p-interval',tip:{tid:'~55 min total',puls:'184–190 bpm',fart:'4:40–5:00/km',desc:'WU 15 min Z2 → 4×6 min Z4+ (2 min aktiv vila) → CD 10 min. Pulsen stiger naturligt mot slutet av varje drag – det är normalt och rätt.'}},
+  int_z5_6x3:{label:'Intervall Z5',cat:'Intervall Z5',cls:'p-interval',tip:{tid:'~50 min total',puls:'190–205 bpm',fart:'4:23–4:40/km',desc:'WU 15 min Z2 → 6×3 min Z5 (90 sek jogg-vila) → CD 10 min. Hög återhämtningstid – undvik styrka dagen efter. Känn att du lämnar lite i tanken varje drag.'}},
+  int_z4m_3x6:{label:'Intervall Z4− (deload)',cat:'Intervall',cls:'p-interval',tip:{tid:'~45 min total',puls:'178–184 bpm',fart:'5:00–5:17/km',desc:'WU 10 min → 3×6 min Z4− (2 min vila) → CD 10 min. Lättare deload-variant. Håll igen – syftet är att hålla formen, inte bygga den.'}},
+  int_taper_4x2:{label:'Aktiveringsintervall',cat:'Taper',cls:'p-interval',tip:{tid:'~35 min total',puls:'184–190 bpm',fart:'4:40–5:00/km',desc:'WU 10 min Z2 → 4×2 min Z4+ (2 min vila) → CD 10 min. Håll benen snabba utan att trötta ut dem. Inga prestationskrav.'}},
+  styrka:{label:'Styrkepass',cat:'Styrka',cls:'p-styrka',tip:{tid:'45–60 min',puls:'–',fart:'–',desc:'Helkroppsprogram via styrkecoach. Fokus på höft/gluteus och knästabilitet. Undvik tung belastning dagen innan ett intervallpass.'}},
+  taper_z2:{label:'Z2 taper',cat:'Z2 taper',cls:'p-z2',tip:{tid:'30–35 min',puls:'140–160 bpm',fart:'6:30–8:00/km',desc:'Lätt jogg. Håll benen igång utan att trötta ut dem. Inga prestationskrav – lyssna på kroppen.'}},
+  race_hbg:{label:'🏁 Helsingborg HM',cat:'LOPP',cls:'p-race',tip:{tid:'Mål: sub 2:00:00',puls:'~178–184 bpm',fart:'~5:40/km',desc:'Startfart lugn – håll Z4− första 10 km (ca 5:45/km). Öka mot Z4+ km 10–18. Sista 3 km: ge allt. Spring med 2:00-pacern om möjligt.'}},
+  race_malmo:{label:'🏁 Malmö HM',cat:'LOPP',cls:'p-race',tip:{tid:'Mål: sub 2:00:00',puls:'~178–190 bpm',fart:'~5:40/km',desc:'Platt bana – perfekt för PB. Erfarenheten från Helsingborg i ryggen. Välj startkorrall aktivt. Negativ split är nyckeln: sista halvmaran snabbare än den första.'}},
+};
+
+const weeks=[
+  {label:'Vecka 1',dates:'29 jun – 5 jul',tag:'normal',note:'Uppstart – bygg in rytmen',days:['styrka','z2_40','vila','int_z4m_4x8','vila','z2_lang','vila']},
+  {label:'Vecka 2',dates:'6 jul – 12 jul',tag:'normal',note:'Lägg till Z5',days:['styrka','z2_55','int_z5_6x3','vila','styrka','z2_lang','vila']},
+  {label:'Vecka 3',dates:'13 jul – 19 jul',tag:'normal',note:'4 löppass – öka volymen',days:['z2_40','styrka','int_z4p_4x6','vila','z2_55','z2_lang','vila']},
+  {label:'Vecka 4 – Deload',dates:'20 jul – 26 jul',tag:'deload',note:'−30% volym · knä/höft-fokus',days:['styrka','z2_40','vila','int_z4m_3x6','vila','z2_55','vila']},
+  {label:'Vecka 5',dates:'27 jul – 2 aug',tag:'normal',note:'Tillbaka – Z4+ och långpass',days:['styrka','z2_55','int_z4p_4x6','vila','styrka','z2_lang','vila']},
+  {label:'Vecka 6',dates:'3 aug – 9 aug',tag:'normal',note:'Toppvecka – max belastning',days:['z2_40','styrka','int_z5_6x3','vila','int_z4m_4x8','z2_extra_lang','vila']},
+  {label:'Vecka 7 – Deload',dates:'10 aug – 16 aug',tag:'deload',note:'Ladda inför sista blocket',days:['styrka','z2_40','vila','int_z4m_3x6','vila','z2_55','vila']},
+  {label:'Vecka 8',dates:'17 aug – 23 aug',tag:'normal',note:'Sista hårda blocket',days:['styrka','z2_55','int_z5_6x3','vila','int_z4p_4x6','z2_lang','vila']},
+  {label:'Vecka 9 – Taper',dates:'24 aug – 30 aug',tag:'taper',note:'−40% volym · behåll intensitet',days:['taper_z2','styrka','int_taper_4x2','vila','taper_z2','taper_z2','vila']},
+  {label:'Vecka 10 – Taper',dates:'31 aug – 6 sep',tag:'taper',note:'🏁 Helsingborg söndag 6 sep',days:['taper_z2','int_taper_4x2','vila','taper_z2','vila','vila','race_hbg']},
+  {label:'Vecka 11 – Återhämtning',dates:'7 sep – 13 sep',tag:'deload',note:'Ingen press – lyssna på kroppen',days:['vila','taper_z2','vila','styrka','taper_z2','vila','vila']},
+  {label:'Vecka 12',dates:'14 sep – 20 sep',tag:'normal',note:'Bygg om mot Malmö',days:['styrka','z2_55','int_z4m_4x8','vila','z2_40','z2_lang','vila']},
+  {label:'Vecka 13 – Taper',dates:'21 sep – 27 sep',tag:'taper',note:'Sista taper inför Malmö',days:['taper_z2','styrka','int_taper_4x2','vila','taper_z2','vila','vila']},
+  {label:'Vecka 14 – Lopp',dates:'28 sep – 4 okt',tag:'race',note:'🏁 Malmö lördag 3 okt',days:['taper_z2','vila','int_taper_4x2','vila','taper_z2','race_malmo','vila']},
+];
+
+let state;
+try { state = JSON.parse(localStorage.getItem('traning_state_2026')) || null; } catch(e) { state=null; }
+if(!state) state = weeks.map(w => w.days.map(() => false));
+function save(){ try{ localStorage.setItem('traning_state_2026', JSON.stringify(state)); }catch(e){} }
+
+let currentModal = null;
+
+function badgeCls(tag){ return {normal:'b-normal',deload:'b-deload',taper:'b-taper',race:'b-race'}[tag]; }
+function badgeLabel(tag){ return {normal:'Träningsvecka',deload:'Deload',taper:'Taper',race:'Loppvecka'}[tag]; }
+function countDone(wi){ return state[wi].filter((d,di)=>d&&weeks[wi].days[di]!=='vila').length; }
+function countTotal(wi){ return weeks[wi].days.filter(k=>k!=='vila').length; }
+
+function updateTotals(){
+  let allDone=0,allTotal=0;
+  weeks.forEach((_,wi)=>{allDone+=countDone(wi);allTotal+=countTotal(wi);});
+  document.getElementById('total-done').textContent=allDone+' / '+allTotal;
+  const pct=allTotal?Math.round(allDone/allTotal*100):0;
+  document.getElementById('total-bar').style.width=pct+'%';
+  document.getElementById('total-pct').textContent=pct+'%';
+}
+
+function render(){
+  const container=document.getElementById('schedule');
+  container.innerHTML='';
+  weeks.forEach((week,wi)=>{
+    const div=document.createElement('div');
+    div.className='week';
+    const done=countDone(wi), tot=countTotal(wi);
+    div.innerHTML=`
+      <div class="week-hdr" onclick="toggleWeek(${wi})">
+        <div class="week-hdr-left">
+          <h2>${week.label} <span class="chevron">▾</span></h2>
+          <p>${week.dates} · ${week.note}</p>
+        </div>
+        <div class="week-hdr-right">
+          <span class="badge ${badgeCls(week.tag)}">${badgeLabel(week.tag)}</span>
+          <span style="font-size:12px;color:var(--text-faint)">${done}/${tot} avklarade</span>
+        </div>
+      </div>
+      <div class="days-list" id="days-${wi}"></div>`;
+    container.appendChild(div);
+
+    const daysList=div.querySelector('.days-list');
+    week.days.forEach((key,di)=>{
+      const sess=S[key];
+      const isDone=state[wi][di];
+      const row=document.createElement('div');
+      row.className='day-row';
+      if(key==='vila'){
+        row.innerHTML=`<div class="day-label-col"><span class="day-name">${DAYS[di]}</span></div>
+          <div class="day-content"><span class="p-vila">Vila</span></div>`;
+      } else {
+        const isRace=key==='race_hbg'||key==='race_malmo';
+        row.innerHTML=`<div class="day-label-col"><span class="day-name">${DAYS[di]}</span></div>
+          <div class="day-content">
+            <div class="pill ${sess.cls}${isDone?' pill-done':''}" onclick="openModal(${wi},${di})">
+              <div class="pill-cat">${sess.cat}</div>
+              <div class="pill-name">${sess.label}</div>
+              ${!isRace?`<span class="check-mark">${isDone?'✓':'○'}</span>`:''}
+            </div>
+          </div>`;
+      }
+      daysList.appendChild(row);
+    });
+    if(wi<=1) toggleOpen(wi);
+  });
+  updateTotals();
+}
+
+function toggleWeek(wi){
+  const el=document.getElementById('days-'+wi);
+  const hdr=el.previousElementSibling;
+  if(el.classList.contains('open')){el.classList.remove('open');hdr.classList.add('collapsed');}
+  else{el.classList.add('open');hdr.classList.remove('collapsed');}
+}
+function toggleOpen(wi){
+  const el=document.getElementById('days-'+wi);
+  if(el) el.classList.add('open');
+}
+
+function openModal(wi,di){
+  const key=weeks[wi].days[di];
+  const sess=S[key];
+  const tip=sess.tip;
+  const isDone=state[wi][di];
+  const isRace=key==='race_hbg'||key==='race_malmo';
+
+  document.getElementById('m-cat').textContent=sess.cat;
+  document.getElementById('m-title').textContent=sess.label;
+
+  let rows='';
+  if(tip){
+    if(tip.tid) rows+=`<div class="modal-row"><span class="modal-lbl">Tid</span><span class="modal-val">${tip.tid}</span></div>`;
+    if(tip.puls&&tip.puls!=='–') rows+=`<div class="modal-row"><span class="modal-lbl">Puls</span><span class="modal-val">${tip.puls}</span></div>`;
+    if(tip.fart&&tip.fart!=='–') rows+=`<div class="modal-row"><span class="modal-lbl">Fart</span><span class="modal-val">${tip.fart}</span></div>`;
+  }
+  document.getElementById('m-rows').innerHTML=rows;
+  document.getElementById('m-desc').textContent=tip?tip.desc:'';
+
+  // Done toggle
+  const doneToggle=document.getElementById('m-done-toggle');
+  if(!isRace){
+    doneToggle.innerHTML=isDone
+      ?`<button class="done-btn done-btn-uncheck" onclick="toggleDone(${wi},${di})">Markera som ej klar</button>`
+      :`<button class="done-btn done-btn-check" onclick="toggleDone(${wi},${di})">✓ Bocka av passet</button>`;
+  } else { doneToggle.innerHTML=''; }
+
+  // Day picker — swap within same week
+  const moveSection=document.getElementById('m-move-section');
+  const picker=document.getElementById('m-day-picker');
+  if(!isRace){
+    moveSection.style.display='block';
+    picker.innerHTML='';
+    DAYS.forEach((dayName,targetDi)=>{
+      const targetKey=weeks[wi].days[targetDi];
+      const isCurrent=targetDi===di;
+      const isTargetRace=targetKey==='race_hbg'||targetKey==='race_malmo';
+      const btn=document.createElement('button');
+      btn.className='day-pick-btn'+(isCurrent?' current':'');
+      btn.textContent=dayName;
+      btn.disabled=isCurrent||isTargetRace;
+      btn.onclick=()=>moveSession(wi,di,targetDi);
+      picker.appendChild(btn);
+    });
+  } else { moveSection.style.display='none'; }
+
+  currentModal={wi,di};
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function moveSession(wi, fromDi, toDi){
+  // Swap sessions and their done-state
+  const tmpKey=weeks[wi].days[toDi];
+  const tmpDone=state[wi][toDi];
+  weeks[wi].days[toDi]=weeks[wi].days[fromDi];
+  state[wi][toDi]=state[wi][fromDi];
+  weeks[wi].days[fromDi]=tmpKey;
+  state[wi][fromDi]=tmpDone;
+  save();
+  render();
+  // Re-open modal pointing to the new position
+  openModal(wi, toDi);
+}
+
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modal')) return;
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+  currentModal=null;
+}
+
+function toggleDone(wi,di){
+  state[wi][di]=!state[wi][di];
+  save();
+  render();
+  openModal(wi,di);
+}
+
+render();
+</script>
+</body>
+</html>
