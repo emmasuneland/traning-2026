@@ -113,6 +113,7 @@
   .p-taper { background: var(--gray-light); color: var(--gray-dark); }
   .p-race { background: var(--coral-light); color: var(--coral-dark); }
   .p-vila { color: var(--text-faint); font-size: 13px; font-style: italic; padding: 12px 0; }
+  .pill-optional { font-size: 10px; opacity: 0.6; font-style: italic; margin-top: 2px; }
 
   /* Modal */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
@@ -191,36 +192,105 @@ const DAYS=['Mån','Tis','Ons','Tor','Fre','Lör','Sön'];
 
 const S={
   vila:{label:'Vila',cat:'',cls:'p-vila',tip:null},
+  optional:{label:'Feel-good löpning',cat:'Optional',cls:'p-z2',tip:{tid:'30–40 min',puls:'140–160 bpm',fart:'6:30–8:00/km',desc:'Frivilligt pass – kör bara om kroppen känns bra. Lugnt och lätt, inget prestationskrav. Hoppa över utan dåligt samvete om du är trött.'}},
+
+  // Z2 pass
   z2_40:{label:'Z2 löpning',cat:'Z2 bas',cls:'p-z2',tip:{tid:'40–50 min',puls:'140–165 bpm',fart:'6:00–8:00/km',desc:'Konversationstempo hela passet. Om du inte kan prata i hela meningar är farten för hög. Avsluta utan att vara trött.'}},
   z2_55:{label:'Z2 löpning',cat:'Z2 bas',cls:'p-z2',tip:{tid:'55–65 min',puls:'140–165 bpm',fart:'6:00–8:00/km',desc:'Jämn aerob bas. Puls styr – inte fart. Om pulsen kryper mot 165, sänk farten direkt. Bygger din aeroba motor.'}},
   z2_lang:{label:'Långpass Z2',cat:'Långpass',cls:'p-long',tip:{tid:'75–90 min',puls:'140–165 bpm',fart:'6:00–8:00/km',desc:'Progressivt upplägg: första 2/3 nedre Z2, sista tredjedelen mot 165. Ät/drick under passet för att träna tarmfunktion inför lopp.'}},
   z2_extra_lang:{label:'Långpass Z2',cat:'Toppvolym',cls:'p-long',tip:{tid:'90–105 min',puls:'140–165 bpm',fart:'6:00–7:30/km',desc:'Toppvolympass – längsta passet i schemat. Negativ split: andra halvan något snabbare. Viktigt: ät 30–60g kolhydrater per timme.'}},
-  int_z4m_4x8:{label:'Intervall Z4−',cat:'Intervall',cls:'p-interval',tip:{tid:'~60 min total',puls:'178–184 bpm',fart:'5:00–5:17/km',desc:'WU 15 min Z2 → 4×8 min Z4− (2 min aktiv vila Z1) → CD 10 min Z2. Håll exakt samma fart alla fyra. Om puls skenar på sista draget: sänk farten nästa gång.'}},
-  int_z4p_4x6:{label:'Intervall Z4+',cat:'Intervall',cls:'p-interval',tip:{tid:'~55 min total',puls:'184–190 bpm',fart:'4:40–5:00/km',desc:'WU 15 min Z2 → 4×6 min Z4+ (2 min aktiv vila) → CD 10 min. Pulsen stiger naturligt mot slutet av varje drag – det är normalt och rätt.'}},
-  int_z5_6x3:{label:'Intervall Z5',cat:'Intervall Z5',cls:'p-interval',tip:{tid:'~50 min total',puls:'190–205 bpm',fart:'4:23–4:40/km',desc:'WU 15 min Z2 → 6×3 min Z5 (90 sek jogg-vila) → CD 10 min. Hög återhämtningstid – undvik styrka dagen efter. Känn att du lämnar lite i tanken varje drag.'}},
-  int_z4m_3x6:{label:'Intervall Z4− (deload)',cat:'Intervall',cls:'p-interval',tip:{tid:'~45 min total',puls:'178–184 bpm',fart:'5:00–5:17/km',desc:'WU 10 min → 3×6 min Z4− (2 min vila) → CD 10 min. Lättare deload-variant. Håll igen – syftet är att hålla formen, inte bygga den.'}},
-  int_taper_4x2:{label:'Aktiveringsintervall',cat:'Taper',cls:'p-interval',tip:{tid:'~35 min total',puls:'184–190 bpm',fart:'4:40–5:00/km',desc:'WU 10 min Z2 → 4×2 min Z4+ (2 min vila) → CD 10 min. Håll benen snabba utan att trötta ut dem. Inga prestationskrav.'}},
-  styrka:{label:'Styrkepass',cat:'Styrka',cls:'p-styrka',tip:{tid:'45–60 min',puls:'–',fart:'–',desc:'Helkroppsprogram via styrkecoach. Fokus på höft/gluteus och knästabilitet. Undvik tung belastning dagen innan ett intervallpass.'}},
+
+  // Intervall – kortare variant (30-40 min, för veckor med 2 intervall)
+  int_z4m_kort:{label:'Intervall Z4−',cat:'Intervall',cls:'p-interval',tip:{tid:'~35 min total',puls:'178–184 bpm',fart:'5:00–5:17/km',desc:'WU 10 min Z2 → 3×6 min Z4− (90 sek aktiv vila Z1) → CD 8 min Z2. Kortare variant för veckor med dubbla intervall. Håll jämn fart alla drag.'}},
+  int_z4p_kort:{label:'Intervall Z4+',cat:'Intervall',cls:'p-interval',tip:{tid:'~35 min total',puls:'184–190 bpm',fart:'4:40–5:00/km',desc:'WU 10 min Z2 → 3×5 min Z4+ (90 sek aktiv vila) → CD 8 min. Kortare variant. Pulsen stiger naturligt mot slutet av varje drag.'}},
+  int_z5_kort:{label:'Intervall Z5',cat:'Intervall Z5',cls:'p-interval',tip:{tid:'~30 min total',puls:'190–205 bpm',fart:'4:23–4:40/km',desc:'WU 10 min Z2 → 5×2 min Z5 (90 sek jogg-vila) → CD 8 min. Kortare variant – hög kvalitet per drag. Känn att du lämnar lite i tanken varje gång.'}},
+
+  // Intervall – längre variant (45-60 min, för veckor med 1 intervall)
+  int_z4m_lang:{label:'Intervall Z4−',cat:'Intervall',cls:'p-interval',tip:{tid:'~55 min total',puls:'178–184 bpm',fart:'5:00–5:17/km',desc:'WU 15 min Z2 → 4×8 min Z4− (2 min aktiv vila Z1) → CD 10 min Z2. Håll exakt samma fart alla fyra. Om puls skenar på sista draget: sänk farten nästa gång.'}},
+  int_z4p_lang:{label:'Intervall Z4+',cat:'Intervall',cls:'p-interval',tip:{tid:'~50 min total',puls:'184–190 bpm',fart:'4:40–5:00/km',desc:'WU 15 min Z2 → 4×6 min Z4+ (2 min aktiv vila) → CD 10 min. Lång variant – pulsen stiger naturligt mot slutet av varje drag, det är rätt.'}},
+  int_z5_lang:{label:'Intervall Z5',cat:'Intervall Z5',cls:'p-interval',tip:{tid:'~50 min total',puls:'190–205 bpm',fart:'4:23–4:40/km',desc:'WU 15 min Z2 → 6×3 min Z5 (90 sek jogg-vila) → CD 10 min. Hög återhämtningstid – undvik styrka dagen efter. Känn att du lämnar lite i tanken varje drag.'}},
+
+  // Deload intervall
+  int_z4m_deload:{label:'Intervall Z4− (deload)',cat:'Intervall',cls:'p-interval',tip:{tid:'~40 min total',puls:'178–184 bpm',fart:'5:00–5:17/km',desc:'WU 10 min → 3×6 min Z4− (2 min vila) → CD 10 min. Deload-variant – håll igen. Syftet är att hålla formen, inte bygga den.'}},
+
+  // Taper
+  int_taper_4x2:{label:'Aktiveringsintervall',cat:'Intervall',cls:'p-interval',tip:{tid:'~35 min total',puls:'184–190 bpm',fart:'4:40–5:00/km',desc:'WU 10 min Z2 → 4×2 min Z4+ (2 min vila) → CD 10 min. Håll benen snabba utan att trötta ut dem. Inga prestationskrav inför loppet.'}},
   taper_z2:{label:'Z2 taper',cat:'Z2 taper',cls:'p-z2',tip:{tid:'30–35 min',puls:'140–160 bpm',fart:'6:30–8:00/km',desc:'Lätt jogg. Håll benen igång utan att trötta ut dem. Inga prestationskrav – lyssna på kroppen.'}},
+
+  // Styrka
+  styrka:{label:'Styrkepass',cat:'Styrka',cls:'p-styrka',tip:{tid:'45–60 min',puls:'–',fart:'–',desc:'Helkroppsprogram via styrkecoach. Fokus på höft/gluteus och knästabilitet. Undvik tung belastning dagen innan ett intervallpass.'}},
+
+  // Lopp
   race_hbg:{label:'🏁 Helsingborg HM',cat:'LOPP',cls:'p-race',tip:{tid:'Mål: sub 2:00:00',puls:'~178–184 bpm',fart:'~5:40/km',desc:'Startfart lugn – håll Z4− första 10 km (ca 5:45/km). Öka mot Z4+ km 10–18. Sista 3 km: ge allt. Spring med 2:00-pacern om möjligt.'}},
   race_malmo:{label:'🏁 Malmö HM',cat:'LOPP',cls:'p-race',tip:{tid:'Mål: sub 2:00:00',puls:'~178–190 bpm',fart:'~5:40/km',desc:'Platt bana – perfekt för PB. Erfarenheten från Helsingborg i ryggen. Välj startkorrall aktivt. Negativ split är nyckeln: sista halvmaran snabbare än den första.'}},
 };
 
+// Veckostruktur:
+// Typ A (4 pass): 2 Z2/långpass + 1 längre intervall + 1 styrka
+// Typ B (5 pass): 1 Z2 + 2 kortare intervall + 2 styrka
+// Typ C (4 pass): 1 Z2 + 2 kortare intervall + 1 styrka
+// Deload (3 pass): 1 Z2 + 1 styrka + 1 optional
+// Taper: lättare variant
+
 const weeks=[
-  {label:'Vecka 1',dates:'29 jun – 5 jul',tag:'normal',note:'Uppstart – bygg in rytmen',days:['styrka','z2_40','vila','int_z4m_4x8','vila','z2_lang','vila']},
-  {label:'Vecka 2',dates:'6 jul – 12 jul',tag:'normal',note:'Lägg till Z5',days:['styrka','z2_55','int_z5_6x3','vila','styrka','z2_lang','vila']},
-  {label:'Vecka 3',dates:'13 jul – 19 jul',tag:'normal',note:'4 löppass – öka volymen',days:['z2_40','styrka','int_z4p_4x6','vila','z2_55','z2_lang','vila']},
-  {label:'Vecka 4 – Deload',dates:'20 jul – 26 jul',tag:'deload',note:'−30% volym · knä/höft-fokus',days:['styrka','z2_40','vila','int_z4m_3x6','vila','z2_55','vila']},
-  {label:'Vecka 5',dates:'27 jul – 2 aug',tag:'normal',note:'Tillbaka – Z4+ och långpass',days:['styrka','z2_55','int_z4p_4x6','vila','styrka','z2_lang','vila']},
-  {label:'Vecka 6',dates:'3 aug – 9 aug',tag:'normal',note:'Toppvecka – max belastning',days:['z2_40','styrka','int_z5_6x3','vila','int_z4m_4x8','z2_extra_lang','vila']},
-  {label:'Vecka 7 – Deload',dates:'10 aug – 16 aug',tag:'deload',note:'Ladda inför sista blocket',days:['styrka','z2_40','vila','int_z4m_3x6','vila','z2_55','vila']},
-  {label:'Vecka 8',dates:'17 aug – 23 aug',tag:'normal',note:'Sista hårda blocket',days:['styrka','z2_55','int_z5_6x3','vila','int_z4p_4x6','z2_lang','vila']},
-  {label:'Vecka 9 – Taper',dates:'24 aug – 30 aug',tag:'taper',note:'−40% volym · behåll intensitet',days:['taper_z2','styrka','int_taper_4x2','vila','taper_z2','taper_z2','vila']},
-  {label:'Vecka 10 – Taper',dates:'31 aug – 6 sep',tag:'taper',note:'🏁 Helsingborg söndag 6 sep',days:['taper_z2','int_taper_4x2','vila','taper_z2','vila','vila','race_hbg']},
-  {label:'Vecka 11 – Återhämtning',dates:'7 sep – 13 sep',tag:'deload',note:'Ingen press – lyssna på kroppen',days:['vila','taper_z2','vila','styrka','taper_z2','vila','vila']},
-  {label:'Vecka 12',dates:'14 sep – 20 sep',tag:'normal',note:'Bygg om mot Malmö',days:['styrka','z2_55','int_z4m_4x8','vila','z2_40','z2_lang','vila']},
-  {label:'Vecka 13 – Taper',dates:'21 sep – 27 sep',tag:'taper',note:'Sista taper inför Malmö',days:['taper_z2','styrka','int_taper_4x2','vila','taper_z2','vila','vila']},
-  {label:'Vecka 14 – Lopp',dates:'28 sep – 4 okt',tag:'race',note:'🏁 Malmö lördag 3 okt',days:['taper_z2','vila','int_taper_4x2','vila','taper_z2','race_malmo','vila']},
+  // V1 – Typ A: 2 Z2 + 1 intervall Z4− lång + 1 styrka = 4 pass
+  {label:'Vecka 1',dates:'29 jun – 5 jul',tag:'normal',note:'Uppstart – bygg in rytmen (4 pass)',
+   days:['styrka','z2_40','vila','int_z4m_lang','vila','z2_lang','vila']},
+
+  // V2 – Typ B: 1 Z2 + 2 kortare intervall (Z4−, Z5) + 2 styrka = 5 pass
+  // Z5 + Z4− är ok, vila däremellan. Aldrig Z5+Z4+ samma vecka.
+  {label:'Vecka 2',dates:'6 jul – 12 jul',tag:'normal',note:'Dubbla intervall – kortare format (5 pass)',
+   days:['styrka','z2_55','int_z4m_kort','vila','int_z5_kort','styrka','vila']},
+
+  // V3 – Typ A: långpass + Z2 + 1 intervall Z4+ lång + 1 styrka = 4 pass
+  {label:'Vecka 3',dates:'13 jul – 19 jul',tag:'normal',note:'Långpass + ett hårt intervall (4 pass)',
+   days:['styrka','vila','int_z4p_lang','vila','z2_55','z2_lang','vila']},
+
+  // V4 – DELOAD: 1 Z2 + 1 styrka + 1 optional = 2–3 pass
+  {label:'Vecka 4 – Deload',dates:'20 jul – 26 jul',tag:'deload',note:'−30% volym · knä/höft-fokus (2–3 pass)',
+   days:['styrka','z2_40','vila','vila','optional','vila','vila']},
+
+  // V5 – Typ B: 1 Z2 + 2 kortare intervall (Z4−, Z5) + 2 styrka = 5 pass
+  // Z4− tisdag, vila ons, Z5 tors – minst 48h mellan hårda pass
+  {label:'Vecka 5',dates:'27 jul – 2 aug',tag:'normal',note:'Dubbla intervall – tillbaka på banan (5 pass)',
+   days:['styrka','z2_55','int_z4m_kort','vila','int_z5_kort','styrka','vila']},
+
+  // V6 – Typ A: långpass extra lång + Z2 + 1 intervall Z5 lång + 1 styrka = 4 pass
+  {label:'Vecka 6',dates:'3 aug – 9 aug',tag:'normal',note:'Toppvecka – max belastning (4 pass)',
+   days:['vila','styrka','int_z5_lang','vila','z2_40','z2_extra_lang','vila']},
+
+  // V7 – DELOAD: 1 Z2 + 1 styrka + 1 optional = 2–3 pass
+  {label:'Vecka 7 – Deload',dates:'10 aug – 16 aug',tag:'deload',note:'Ladda inför sista blocket (2–3 pass)',
+   days:['styrka','z2_40','vila','vila','optional','vila','vila']},
+
+  // V8 – Typ C: 1 Z2 + 2 kortare intervall (Z4−, Z5) + 1 styrka = 4 pass
+  // Z5 ons, vila tors, Z4− fre – aldrig Z5+Z4+ samma vecka
+  {label:'Vecka 8',dates:'17 aug – 23 aug',tag:'normal',note:'Sista hårda blocket – dubbla intervall (4 pass)',
+   days:['styrka','z2_55','int_z5_kort','vila','int_z4m_kort','z2_lang','vila']},
+
+  // V9 – Taper: 3 löppass + 1 styrka = 4 pass
+  {label:'Vecka 9 – Taper',dates:'24 aug – 30 aug',tag:'taper',note:'−40% volym · behåll intensitet (4 pass)',
+   days:['taper_z2','styrka','int_taper_4x2','vila','taper_z2','taper_z2','vila']},
+
+  // V10 – Taper + Lopp Helsingborg
+  {label:'Vecka 10 – Taper',dates:'31 aug – 6 sep',tag:'taper',note:'🏁 Helsingborg söndag 6 sep',
+   days:['taper_z2','int_taper_4x2','vila','taper_z2','vila','vila','race_hbg']},
+
+  // V11 – Återhämtning: 1–2 Z2 + 1 styrka = 2–3 pass
+  {label:'Vecka 11 – Återhämtning',dates:'7 sep – 13 sep',tag:'deload',note:'Ingen press – lyssna på kroppen (2–3 pass)',
+   days:['vila','taper_z2','vila','styrka','optional','vila','vila']},
+
+  // V12 – Typ A: långpass + Z2 + intervall Z4− lång + 1 styrka = 4 pass
+  {label:'Vecka 12',dates:'14 sep – 20 sep',tag:'normal',note:'Bygg om mot Malmö (4 pass)',
+   days:['styrka','z2_55','int_z4m_lang','vila','z2_40','z2_lang','vila']},
+
+  // V13 – Taper: 3 löppass + 1 styrka = 4 pass
+  {label:'Vecka 13 – Taper',dates:'21 sep – 27 sep',tag:'taper',note:'Sista taper inför Malmö (4 pass)',
+   days:['taper_z2','styrka','int_taper_4x2','vila','taper_z2','vila','vila']},
+
+  // V14 – Loppvecka Malmö
+  {label:'Vecka 14 – Lopp',dates:'28 sep – 4 okt',tag:'race',note:'🏁 Malmö lördag 3 okt',
+   days:['taper_z2','vila','int_taper_4x2','vila','taper_z2','race_malmo','vila']},
 ];
 
 let state;
@@ -276,11 +346,13 @@ function render(){
           <div class="day-content"><span class="p-vila">Vila</span></div>`;
       } else {
         const isRace=key==='race_hbg'||key==='race_malmo';
+        const isOptional=key==='optional';
         row.innerHTML=`<div class="day-label-col"><span class="day-name">${DAYS[di]}</span></div>
           <div class="day-content">
             <div class="pill ${sess.cls}${isDone?' pill-done':''}" onclick="openModal(${wi},${di})">
               <div class="pill-cat">${sess.cat}</div>
               <div class="pill-name">${sess.label}</div>
+              ${isOptional?'<div class="pill-optional">valfritt</div>':''}
               ${!isRace?`<span class="check-mark">${isDone?'✓':'○'}</span>`:''}
             </div>
           </div>`;
