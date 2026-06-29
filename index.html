@@ -306,35 +306,70 @@ const S={
   race_malmo:{label:'🏁 Malmö HM',cat:'LOPP',cls:'p-race',tip:{tid:'Mål: sub 2:00:00',puls:'~178–190 bpm',fart:'~5:40/km',desc:'Platt bana – perfekt för PB. Erfarenheten från Helsingborg i ryggen. Välj startkorrall aktivt. Negativ split är nyckeln: sista halvmaran snabbare än den första.'}},
 };
 
+// days is now an array of 7 items, each item is an array of session keys.
+// e.g. ['styrka','z2_40'] on the same day = two sessions that day.
+// ['vila'] or [] = rest day.
 const weeks=[
-  {label:'Vecka 1',dates:'29 jun – 5 jul',tag:'normal',note:'Uppstart – bygg in rytmen (4 pass)',days:['styrka','z2_40','vila','int_z4m_lang','vila','z2_lang','vila']},
-  {label:'Vecka 2',dates:'6 jul – 12 jul',tag:'normal',note:'Dubbla intervall – kortare format (5 pass)',days:['styrka','z2_55','int_z4m_kort','vila','int_z5_kort','styrka','vila']},
-  {label:'Vecka 3',dates:'13 jul – 19 jul',tag:'normal',note:'Långpass + ett hårt intervall (4 pass)',days:['styrka','vila','int_z4p_lang','vila','z2_55','z2_lang','vila']},
-  {label:'Vecka 4 – Deload',dates:'20 jul – 26 jul',tag:'deload',note:'−30% volym · knä/höft-fokus (2–3 pass)',days:['styrka','z2_40','vila','vila','optional','vila','vila']},
-  {label:'Vecka 5',dates:'27 jul – 2 aug',tag:'normal',note:'Dubbla intervall – tillbaka på banan (5 pass)',days:['styrka','z2_55','int_z4m_kort','vila','int_z5_kort','styrka','vila']},
-  {label:'Vecka 6',dates:'3 aug – 9 aug',tag:'normal',note:'Toppvecka – max belastning (4 pass)',days:['vila','styrka','int_z5_lang','vila','z2_40','z2_extra_lang','vila']},
-  {label:'Vecka 7 – Deload',dates:'10 aug – 16 aug',tag:'deload',note:'Ladda inför sista blocket (2–3 pass)',days:['styrka','z2_40','vila','vila','optional','vila','vila']},
-  {label:'Vecka 8',dates:'17 aug – 23 aug',tag:'normal',note:'Sista hårda blocket – dubbla intervall (4 pass)',days:['styrka','z2_55','int_z5_kort','vila','int_z4m_kort','z2_lang','vila']},
-  {label:'Vecka 9 – Taper',dates:'24 aug – 30 aug',tag:'taper',note:'−40% volym · behåll intensitet (4 pass)',days:['taper_z2','styrka','int_taper_4x2','vila','taper_z2','taper_z2','vila']},
-  {label:'Vecka 10 – Race Week',dates:'31 aug – 6 sep',tag:'race',note:'🏁 Helsingborg söndag 6 sep',days:['taper_z2','int_taper_4x2','vila','taper_z2','vila','vila','race_hbg']},
-  {label:'Vecka 11 – Återhämtning',dates:'7 sep – 13 sep',tag:'deload',note:'Ingen press – lyssna på kroppen (2–3 pass)',days:['vila','taper_z2','vila','styrka','optional','vila','vila']},
-  {label:'Vecka 12',dates:'14 sep – 20 sep',tag:'normal',note:'Bygg om mot Malmö (4 pass)',days:['styrka','z2_55','int_z4m_lang','vila','z2_40','z2_lang','vila']},
-  {label:'Vecka 13 – Taper',dates:'21 sep – 27 sep',tag:'taper',note:'Sista taper inför Malmö (4 pass)',days:['taper_z2','styrka','int_taper_4x2','vila','taper_z2','vila','vila']},
-  {label:'Vecka 14 – Race Week',dates:'28 sep – 4 okt',tag:'race',note:'🏁 Malmö lördag 3 okt',days:['taper_z2','vila','int_taper_4x2','vila','taper_z2','race_malmo','vila']},
+  {label:'Vecka 1',dates:'29 jun – 5 jul',tag:'normal',note:'Uppstart – bygg in rytmen (4 pass)',
+   days:[['styrka'],['z2_40'],[],[  'int_z4m_lang'],[],['z2_lang'],[]]},
+  {label:'Vecka 2',dates:'6 jul – 12 jul',tag:'normal',note:'Dubbla intervall – kortare format (5 pass)',
+   days:[['styrka'],['z2_55'],['int_z4m_kort'],[],['int_z5_kort'],['styrka'],[]]},
+  {label:'Vecka 3',dates:'13 jul – 19 jul',tag:'normal',note:'Långpass + ett hårt intervall (4 pass)',
+   days:[['styrka'],[],['int_z4p_lang'],[],['z2_55'],['z2_lang'],[]]},
+  {label:'Vecka 4 – Deload',dates:'20 jul – 26 jul',tag:'deload',note:'−30% volym · knä/höft-fokus (2–3 pass)',
+   days:[['styrka'],['z2_40'],[],[],['optional'],[],[]]},
+  {label:'Vecka 5',dates:'27 jul – 2 aug',tag:'normal',note:'Dubbla intervall – tillbaka på banan (5 pass)',
+   days:[['styrka'],['z2_55'],['int_z4m_kort'],[],['int_z5_kort'],['styrka'],[]]},
+  {label:'Vecka 6',dates:'3 aug – 9 aug',tag:'normal',note:'Toppvecka – max belastning (4 pass)',
+   days:[[],['styrka'],['int_z5_lang'],[],['z2_40'],['z2_extra_lang'],[]]},
+  {label:'Vecka 7 – Deload',dates:'10 aug – 16 aug',tag:'deload',note:'Ladda inför sista blocket (2–3 pass)',
+   days:[['styrka'],['z2_40'],[],[],['optional'],[],[]]},
+  {label:'Vecka 8',dates:'17 aug – 23 aug',tag:'normal',note:'Sista hårda blocket – dubbla intervall (4 pass)',
+   days:[['styrka'],['z2_55'],['int_z5_kort'],[],['int_z4m_kort'],['z2_lang'],[]]},
+  {label:'Vecka 9 – Taper',dates:'24 aug – 30 aug',tag:'taper',note:'−40% volym · behåll intensitet (4 pass)',
+   days:[['taper_z2'],['styrka'],['int_taper_4x2'],[],['taper_z2'],['taper_z2'],[]]},
+  {label:'Vecka 10 – Race Week',dates:'31 aug – 6 sep',tag:'race',note:'🏁 Helsingborg söndag 6 sep',
+   days:[['taper_z2'],['int_taper_4x2'],[],['taper_z2'],[],[],['race_hbg']]},
+  {label:'Vecka 11 – Återhämtning',dates:'7 sep – 13 sep',tag:'deload',note:'Ingen press – lyssna på kroppen (2–3 pass)',
+   days:[[],['taper_z2'],[],['styrka'],['optional'],[],[]]},
+  {label:'Vecka 12',dates:'14 sep – 20 sep',tag:'normal',note:'Bygg om mot Malmö (4 pass)',
+   days:[['styrka'],['z2_55'],['int_z4m_lang'],[],['z2_40'],['z2_lang'],[]]},
+  {label:'Vecka 13 – Taper',dates:'21 sep – 27 sep',tag:'taper',note:'Sista taper inför Malmö (4 pass)',
+   days:[['taper_z2'],['styrka'],['int_taper_4x2'],[],['taper_z2'],[],[]]},
+  {label:'Vecka 14 – Race Week',dates:'28 sep – 4 okt',tag:'race',note:'🏁 Malmö lördag 3 okt',
+   days:[['taper_z2'],[],['int_taper_4x2'],[],['taper_z2'],['race_malmo'],[]]},
 ];
 
+// State: state[wi][di][si] = boolean done
 let state;
-try { state=JSON.parse(localStorage.getItem('traning_state_2026'))||null; } catch(e){state=null;}
-if(!state) state=weeks.map(w=>w.days.map(()=>false));
-function save(){try{localStorage.setItem('traning_state_2026',JSON.stringify(state));}catch(e){}}
+try { state=JSON.parse(localStorage.getItem('traning_state_2026_v2'))||null; } catch(e){state=null;}
+if(!state) state=weeks.map(w=>w.days.map(d=>d.map(()=>false)));
+function save(){try{localStorage.setItem('traning_state_2026_v2',JSON.stringify(state));}catch(e){}}
+
+// Ensure state matches current weeks structure (migration safety)
+weeks.forEach((w,wi)=>{
+  if(!state[wi]) state[wi]=w.days.map(d=>d.map(()=>false));
+  w.days.forEach((d,di)=>{
+    if(!state[wi][di]) state[wi][di]=d.map(()=>false);
+    d.forEach((_,si)=>{ if(state[wi][di][si]===undefined) state[wi][di][si]=false; });
+  });
+});
 
 let currentModal=null;
-const isDesktop=()=>window.innerWidth>=900;
 
 function badgeCls(t){return{normal:'b-normal',deload:'b-deload',taper:'b-taper',race:'b-race'}[t];}
 function badgeLabel(t){return{normal:'Träningsvecka',deload:'Deload',taper:'Taper',race:'Loppvecka'}[t];}
-function countDone(wi){return state[wi].filter((d,di)=>d&&weeks[wi].days[di]!=='vila').length;}
-function countTotal(wi){return weeks[wi].days.filter(k=>k!=='vila').length;}
+
+function countDone(wi){
+  let n=0;
+  weeks[wi].days.forEach((d,di)=>d.forEach((key,si)=>{ if(key!=='vila'&&state[wi][di][si]) n++; }));
+  return n;
+}
+function countTotal(wi){
+  let n=0;
+  weeks[wi].days.forEach(d=>d.forEach(key=>{ if(key!=='vila') n++; }));
+  return n;
+}
 
 function updateTotals(){
   let a=0,t=0;
@@ -345,6 +380,29 @@ function updateTotals(){
   document.getElementById('total-pct').textContent=p+'%';
 }
 
+function pillHTML(key, wi, di, si, mobile){
+  const sess=S[key];
+  if(!sess) return '';
+  const isDone=state[wi][di][si];
+  const isRace=key==='race_hbg'||key==='race_malmo';
+  const isOptional=key==='optional';
+  if(mobile){
+    return `<div class="pill ${sess.cls}${isDone?' pill-done':''}" onclick="openModal(${wi},${di},${si})">
+      <div class="pill-cat">${sess.cat}</div>
+      <div class="pill-name">${sess.label}</div>
+      ${isOptional?'<div class="pill-optional">valfritt</div>':''}
+      ${!isRace?`<span class="check-mark">${isDone?'✓':'○'}</span>`:''}
+    </div>`;
+  } else {
+    return `<div class="desktop-pill ${sess.cls}${isDone?' desktop-pill-done':''}" onclick="openModal(${wi},${di},${si})">
+      <div class="desktop-pill-cat">${sess.cat}</div>
+      <div class="desktop-pill-name">${sess.label}</div>
+      ${isOptional?'<div class="pill-optional-label">valfritt</div>':''}
+      ${!isRace?`<span class="desktop-check">${isDone?'✓':'○'}</span>`:''}
+    </div>`;
+  }
+}
+
 function render(){
   const container=document.getElementById('schedule');
   container.innerHTML='';
@@ -353,7 +411,6 @@ function render(){
     const card=document.createElement('div');
     card.className='week-card';
 
-    // Header
     const hdr=document.createElement('div');
     hdr.className='week-hdr';
     hdr.innerHTML=`
@@ -368,44 +425,31 @@ function render(){
     hdr.onclick=()=>toggleWeek(wi);
     card.appendChild(hdr);
 
-    // Progress bar
     const pb=document.createElement('div');
     pb.className='prog-bar';
     pb.innerHTML=`<div class="prog-fill" style="width:${pct}%"></div>`;
     card.appendChild(pb);
 
-    // Days container — holds both mobile rows and desktop grid
     const daysCont=document.createElement('div');
     daysCont.className='days-list';
     daysCont.id='days-'+wi;
 
-    // Desktop grid
     const dGrid=document.createElement('div');
     dGrid.className='desktop-grid';
 
-    week.days.forEach((key,di)=>{
-      const sess=S[key];
-      const isDone=state[wi][di];
-      const isVila=key==='vila';
-      const isRace=key==='race_hbg'||key==='race_malmo';
-      const isOptional=key==='optional';
+    week.days.forEach((daySessions,di)=>{
+      const isEmpty=daySessions.length===0;
 
       // ── Mobile row ──
       const row=document.createElement('div');
       row.className='day-row';
-      if(isVila){
+      if(isEmpty){
         row.innerHTML=`<div class="day-label-col"><span class="day-name">${DAYS[di]}</span></div>
           <div class="day-content"><span class="p-vila">Vila</span></div>`;
       } else {
+        const pillsHtml=daySessions.map((key,si)=>pillHTML(key,wi,di,si,true)).join('');
         row.innerHTML=`<div class="day-label-col"><span class="day-name">${DAYS[di]}</span></div>
-          <div class="day-content">
-            <div class="pill ${sess.cls}${isDone?' pill-done':''}" onclick="openModal(${wi},${di})">
-              <div class="pill-cat">${sess.cat}</div>
-              <div class="pill-name">${sess.label}</div>
-              ${isOptional?'<div class="pill-optional">valfritt</div>':''}
-              ${!isRace?`<span class="check-mark">${isDone?'✓':'○'}</span>`:''}
-            </div>
-          </div>`;
+          <div class="day-content" style="flex-direction:column;align-items:stretch;gap:6px;padding-top:8px;padding-bottom:8px">${pillsHtml}</div>`;
       }
       daysCont.appendChild(row);
 
@@ -413,16 +457,12 @@ function render(){
       const dcell=document.createElement('div');
       dcell.className='desktop-day';
       dcell.innerHTML=`<div class="desktop-day-label">${DAYS[di]}</div>`;
-      if(isVila){
+      if(isEmpty){
         dcell.innerHTML+=`<span class="desktop-vila">Vila</span>`;
       } else {
-        dcell.innerHTML+=`
-          <div class="desktop-pill ${sess.cls}${isDone?' desktop-pill-done':''}" onclick="openModal(${wi},${di})">
-            <div class="desktop-pill-cat">${sess.cat}</div>
-            <div class="desktop-pill-name">${sess.label}</div>
-            ${isOptional?'<div class="pill-optional-label">valfritt</div>':''}
-            ${!isRace?`<span class="desktop-check">${isDone?'✓':'○'}</span>`:''}
-          </div>`;
+        daySessions.forEach((key,si)=>{
+          dcell.innerHTML+=pillHTML(key,wi,di,si,false);
+        });
       }
       dGrid.appendChild(dcell);
     });
@@ -430,8 +470,6 @@ function render(){
     daysCont.appendChild(dGrid);
     card.appendChild(daysCont);
     container.appendChild(card);
-
-    // Open first two weeks by default
     if(wi<=1) toggleOpen(wi);
   });
   updateTotals();
@@ -448,11 +486,11 @@ function toggleOpen(wi){
   if(el) el.classList.add('open');
 }
 
-function openModal(wi,di){
-  const key=weeks[wi].days[di];
+function openModal(wi,di,si){
+  const key=weeks[wi].days[di][si];
   const sess=S[key];
   const tip=sess.tip;
-  const isDone=state[wi][di];
+  const isDone=state[wi][di][si];
   const isRace=key==='race_hbg'||key==='race_malmo';
 
   document.getElementById('m-cat').textContent=sess.cat;
@@ -470,38 +508,43 @@ function openModal(wi,di){
   const doneToggle=document.getElementById('m-done-toggle');
   if(!isRace){
     doneToggle.innerHTML=isDone
-      ?`<button class="done-btn done-btn-uncheck" onclick="toggleDone(${wi},${di})">Markera som ej klar</button>`
-      :`<button class="done-btn done-btn-check" onclick="toggleDone(${wi},${di})">✓ Bocka av passet</button>`;
+      ?`<button class="done-btn done-btn-uncheck" onclick="toggleDone(${wi},${di},${si})">Markera som ej klar</button>`
+      :`<button class="done-btn done-btn-check" onclick="toggleDone(${wi},${di},${si})">✓ Bocka av passet</button>`;
   } else { doneToggle.innerHTML=''; }
 
+  // Day picker — move this session to another day in same week
   const moveSection=document.getElementById('m-move-section');
   const picker=document.getElementById('m-day-picker');
   if(!isRace){
     moveSection.style.display='block';
     picker.innerHTML='';
     DAYS.forEach((dayName,targetDi)=>{
-      const targetKey=weeks[wi].days[targetDi];
+      const targetHasRace=weeks[wi].days[targetDi].some(k=>k==='race_hbg'||k==='race_malmo');
       const isCurrent=targetDi===di;
-      const isTargetRace=targetKey==='race_hbg'||targetKey==='race_malmo';
       const btn=document.createElement('button');
       btn.className='day-pick-btn'+(isCurrent?' current':'');
       btn.textContent=dayName;
-      btn.disabled=isCurrent||isTargetRace;
-      btn.onclick=()=>moveSession(wi,di,targetDi);
+      btn.disabled=isCurrent||targetHasRace;
+      btn.onclick=()=>moveSession(wi,di,si,targetDi);
       picker.appendChild(btn);
     });
   } else { moveSection.style.display='none'; }
 
-  currentModal={wi,di};
+  currentModal={wi,di,si};
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow='hidden';
 }
 
-function moveSession(wi,fromDi,toDi){
-  const tmpKey=weeks[wi].days[toDi],tmpDone=state[wi][toDi];
-  weeks[wi].days[toDi]=weeks[wi].days[fromDi]; state[wi][toDi]=state[wi][fromDi];
-  weeks[wi].days[fromDi]=tmpKey; state[wi][fromDi]=tmpDone;
-  save(); render(); openModal(wi,toDi);
+function moveSession(wi,fromDi,si,toDi){
+  // Remove session from source day, add to target day
+  const key=weeks[wi].days[fromDi].splice(si,1)[0];
+  const doneval=state[wi][fromDi].splice(si,1)[0];
+  weeks[wi].days[toDi].push(key);
+  state[wi][toDi].push(doneval);
+  save(); render();
+  // Re-open modal at new position
+  const newSi=weeks[wi].days[toDi].length-1;
+  openModal(wi,toDi,newSi);
 }
 
 function closeModal(e){
@@ -510,8 +553,8 @@ function closeModal(e){
   document.body.style.overflow=''; currentModal=null;
 }
 
-function toggleDone(wi,di){
-  state[wi][di]=!state[wi][di]; save(); render(); openModal(wi,di);
+function toggleDone(wi,di,si){
+  state[wi][di][si]=!state[wi][di][si]; save(); render(); openModal(wi,di,si);
 }
 
 render();
