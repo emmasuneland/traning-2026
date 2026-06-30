@@ -245,7 +245,7 @@
 
 <div class="top-bar">
   <h1>Träningsschema halvmaraton</h1>
-  <p>29 jun 2026 → Helsingborg 6 sep → Malmö 3 okt</p>
+  <p>29 jun 2026 → Helsingborg 6 sep → Malmö 3 okt <span id="sync-status" style="color:var(--green);font-weight:500"></span></p>
 </div>
 
 <div class="zones-scroll">
@@ -340,20 +340,67 @@ const weeks=[
    days:[['taper_z2'],[],['int_taper_4x2'],[],['taper_z2'],['race_malmo'],[]]},
 ];
 
-// State: state[wi][di][si] = boolean done
-let state;
-try { state=JSON.parse(localStorage.getItem('traning_state_2026_v2'))||null; } catch(e){state=null;}
-if(!state) state=weeks.map(w=>w.days.map(d=>d.map(()=>false)));
-function save(){try{localStorage.setItem('traning_state_2026_v2',JSON.stringify(state));}catch(e){}}
+// ── JSONBin cloud sync ──────────────────────────────────────
+const BIN_ID='6a43844cda38895dfe14c579';
+const BIN_KEY='$2a$10$xdotTEh28eL65L9fVTDSm.UAsoWGE/hz2W6FPEzkqPUDv13WGySy2';
+const BIN_URL='https://api.jsonbin.io/v3/b/'+BIN_ID;
 
-// Ensure state matches current weeks structure (migration safety)
-weeks.forEach((w,wi)=>{
-  if(!state[wi]) state[wi]=w.days.map(d=>d.map(()=>false));
-  w.days.forEach((d,di)=>{
-    if(!state[wi][di]) state[wi][di]=d.map(()=>false);
-    d.forEach((_,si)=>{ if(state[wi][di][si]===undefined) state[wi][di][si]=false; });
+// State: state[wi][di][si] = boolean done
+let state=weeks.map(w=>w.days.map(d=>d.map(()=>false))); // default until cloud loads
+let syncing=false;
+let pendingSave=false;
+
+function ensureStateShape(){
+  weeks.forEach((w,wi)=>{
+    if(!state[wi]) state[wi]=w.days.map(d=>d.map(()=>false));
+    w.days.forEach((d,di)=>{
+      if(!state[wi][di]) state[wi][di]=d.map(()=>false);
+      d.forEach((_,si)=>{ if(state[wi][di][si]===undefined) state[wi][di][si]=false; });
+    });
   });
-});
+}
+
+function setSyncStatus(text){
+  const el=document.getElementById('sync-status');
+  if(el) el.textContent=text;
+}
+
+async function loadFromCloud(){
+  setSyncStatus('Synkar...');
+  try{
+    const res=await fetch(BIN_URL+'/latest',{headers:{'X-Master-Key':BIN_KEY}});
+    if(res.ok){
+      const data=await res.json();
+      if(data.record && data.record.state){
+        state=data.record.state;
+      }
+    }
+  }catch(e){ /* fall back to local default */ }
+  ensureStateShape();
+  setSyncStatus('');
+  render();
+}
+
+async function saveToCloud(){
+  if(syncing){ pendingSave=true; return; }
+  syncing=true;
+  setSyncStatus('Sparar...');
+  try{
+    await fetch(BIN_URL,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':BIN_KEY},
+      body:JSON.stringify({state})
+    });
+    setSyncStatus('Sparat ✓');
+    setTimeout(()=>setSyncStatus(''),1500);
+  }catch(e){
+    setSyncStatus('Kunde inte spara');
+  }
+  syncing=false;
+  if(pendingSave){ pendingSave=false; saveToCloud(); }
+}
+
+function save(){ saveToCloud(); }
 
 let currentModal=null;
 
@@ -557,7 +604,7 @@ function toggleDone(wi,di,si){
   state[wi][di][si]=!state[wi][di][si]; save(); render(); openModal(wi,di,si);
 }
 
-render();
+loadFromCloud();
 </script>
 </body>
 </html>
