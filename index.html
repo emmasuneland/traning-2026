@@ -239,6 +239,25 @@
   .day-pick-btn { flex: 1; min-width: 36px; padding: 8px 4px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font-size: 12px; font-weight: 500; cursor: pointer; text-align: center; }
   .day-pick-btn.current { background: var(--green-light); color: var(--green-dark); border-color: var(--green); }
   .day-pick-btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* ── NOTES ── */
+  .note-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .note-label { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 6px; }
+  .note-textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-surface); color: var(--text); font-family: inherit; font-size: 14px; line-height: 1.5; resize: vertical; outline: none; }
+  .note-textarea:focus { border-color: var(--green); }
+  .note-save-btn { margin-top: 8px; padding: 8px 16px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; }
+  .note-save-btn:active { opacity: 0.8; }
+  /* Week note preview */
+  .week-note-preview { font-size: 12px; color: var(--text-muted); font-style: italic; padding: 6px 16px 8px; border-top: 1px solid var(--border); background: var(--bg); cursor: pointer; }
+  .week-note-preview:hover { color: var(--text); }
+  /* Pass note indicator */
+  .pill-note-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.5; margin-left: 4px; vertical-align: middle; }
+  /* Week note modal */
+  .week-note-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
+  .week-note-modal-overlay.open { display: flex; }
+  @media (min-width: 900px) { .week-note-modal-overlay { align-items: center; } }
+  .week-note-modal { background: var(--bg); border-radius: 20px 20px 0 0; padding: 0 0 env(safe-area-inset-bottom,16px); width: 100%; max-width: 520px; }
+  @media (min-width: 900px) { .week-note-modal { border-radius: var(--radius-lg); } }
 </style>
 </head>
 <body>
@@ -278,7 +297,26 @@
         <div class="move-label">Flytta till annan dag</div>
         <div class="day-picker" id="m-day-picker"></div>
       </div>
+      <div class="note-section">
+        <div class="note-label">Anteckning</div>
+        <textarea class="note-textarea" id="m-note" placeholder="Känsla, avvikelse, tid, kommentar..."></textarea>
+        <button class="note-save-btn" onclick="savePassNote()">Spara anteckning</button>
+      </div>
       <button class="modal-close" onclick="closeModal()">Stäng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Week note modal -->
+<div class="week-note-modal-overlay" id="week-note-modal" onclick="closeWeekNoteModal(event)">
+  <div class="week-note-modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div class="modal-cat">VECKANS ANTECKNING</div>
+      <div class="modal-title" id="wn-title"></div>
+      <textarea class="note-textarea" id="wn-textarea" placeholder="Hur gick veckan? Avvikelser, känsla, lärdomar..."></textarea>
+      <button class="note-save-btn" onclick="saveWeekNote()" style="margin-top:12px">Spara anteckning</button>
+      <button class="modal-close" onclick="closeWeekNoteModal()" style="margin-top:8px">Stäng</button>
     </div>
   </div>
 </div>
@@ -346,7 +384,10 @@ const BIN_KEY='$2a$10$xdotTEh28eL65L9fVTDSm.UAsoWGE/hz2W6FPEzkqPUDv13WGySy2';
 const BIN_URL='https://api.jsonbin.io/v3/b/'+BIN_ID;
 
 // State: state[wi][di][si] = boolean done
-let state=weeks.map(w=>w.days.map(d=>d.map(()=>false))); // default until cloud loads
+let state=weeks.map(w=>w.days.map(d=>d.map(()=>false)));
+// Notes: weekNotes[wi] = string, passNotes[wi][di][si] = string
+let weekNotes={};
+let passNotes={};
 let syncing=false;
 let pendingSave=false;
 
@@ -371,11 +412,11 @@ async function loadFromCloud(){
     const res=await fetch(BIN_URL+'/latest',{headers:{'X-Master-Key':BIN_KEY}});
     if(res.ok){
       const data=await res.json();
-      if(data.record && data.record.state){
-        state=data.record.state;
-      }
+      if(data.record && data.record.state) state=data.record.state;
+      if(data.record && data.record.weekNotes) weekNotes=data.record.weekNotes;
+      if(data.record && data.record.passNotes) passNotes=data.record.passNotes;
     }
-  }catch(e){ /* fall back to local default */ }
+  }catch(e){}
   ensureStateShape();
   setSyncStatus('');
   render();
@@ -389,7 +430,7 @@ async function saveToCloud(){
     await fetch(BIN_URL,{
       method:'PUT',
       headers:{'Content-Type':'application/json','X-Master-Key':BIN_KEY},
-      body:JSON.stringify({state})
+      body:JSON.stringify({state, weekNotes, passNotes})
     });
     setSyncStatus('Sparat ✓');
     setTimeout(()=>setSyncStatus(''),1500);
@@ -445,9 +486,46 @@ function pillHTML(key, wi, di, si, mobile){
       <div class="desktop-pill-cat">${sess.cat}</div>
       <div class="desktop-pill-name">${sess.label}</div>
       ${isOptional?'<div class="pill-optional-label">valfritt</div>':''}
+      ${passNotes[wi]&&passNotes[wi][di]&&passNotes[wi][di][si]?'<span class="pill-note-dot"></span>':''}
       ${!isRace?`<span class="desktop-check">${isDone?'✓':'○'}</span>`:''}
     </div>`;
   }
+}
+
+// ── Week note modal ──────────────────────────────────────────
+let currentWeekNote=null;
+function openWeekNoteModal(wi){
+  currentWeekNote=wi;
+  document.getElementById('wn-title').textContent=weeks[wi].label;
+  document.getElementById('wn-textarea').value=weekNotes[wi]||'';
+  document.getElementById('week-note-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeWeekNoteModal(e){
+  if(e&&e.target!==document.getElementById('week-note-modal')) return;
+  document.getElementById('week-note-modal').classList.remove('open');
+  document.body.style.overflow='';
+  currentWeekNote=null;
+}
+function saveWeekNote(){
+  if(currentWeekNote===null) return;
+  weekNotes[currentWeekNote]=document.getElementById('wn-textarea').value.trim();
+  save(); render();
+  document.getElementById('week-note-modal').classList.remove('open');
+  document.body.style.overflow='';
+  currentWeekNote=null;
+}
+
+// ── Pass note ────────────────────────────────────────────────
+function savePassNote(){
+  if(!currentModal) return;
+  const {wi,di,si}=currentModal;
+  if(!passNotes[wi]) passNotes[wi]={};
+  if(!passNotes[wi][di]) passNotes[wi][di]={};
+  passNotes[wi][di][si]=document.getElementById('m-note').value.trim();
+  save(); render();
+  setSyncStatus('Anteckning sparad ✓');
+  setTimeout(()=>setSyncStatus(''),1500);
 }
 
 function render(){
@@ -476,6 +554,14 @@ function render(){
     pb.className='prog-bar';
     pb.innerHTML=`<div class="prog-fill" style="width:${pct}%"></div>`;
     card.appendChild(pb);
+
+    // Week note preview
+    const wn=weekNotes[wi]||'';
+    const wnPreview=document.createElement('div');
+    wnPreview.className='week-note-preview';
+    wnPreview.textContent=wn ? '📝 '+wn : '+ Lägg till veckanteckning';
+    wnPreview.onclick=(e)=>{e.stopPropagation();openWeekNoteModal(wi);};
+    card.appendChild(wnPreview);
 
     const daysCont=document.createElement('div');
     daysCont.className='days-list';
@@ -578,6 +664,9 @@ function openModal(wi,di,si){
   } else { moveSection.style.display='none'; }
 
   currentModal={wi,di,si};
+  // Load existing note
+  const existingNote=(passNotes[wi]&&passNotes[wi][di]&&passNotes[wi][di][si])||'';
+  document.getElementById('m-note').value=existingNote;
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow='hidden';
 }
