@@ -240,19 +240,22 @@ const S={
   styrka:{label:'Styrkepass',cat:'Styrka',cls:'p-styrka',tip:{tid:'45-60 min',puls:'-',fart:'-',desc:SS+'\n\n'+ST}},
   styrka_kort:{label:'Styrkepass',cat:'Styrka',cls:'p-styrka',tip:{tid:'25-30 min',puls:'-',fart:'-',desc:SS2+'\n\n'+ST2}},
   race_hbg:{label:'Helsingborg HM',cat:'LOPP',cls:'p-race',tip:{tid:'Träningslopp',puls:'Kör på känsla',fart:'Start ~6:00/km',desc:'Träningslopp utan sub 2-krav. Starta försiktigt och öka om kroppen tillåter. Knäet styr.'}},
-  race_malmo:{label:'Malmö HM',cat:'LOPP',cls:'p-race',tip:{tid:'Mål: sub 2:00:00',puls:'~178-190 bpm',fart:'~5:40/km',desc:'Mållopp sub 2:00. Starta Z4- (5:45/km) km 0-10, öka mot Z4+ km 10-18, ge allt sista 3 km.'}}
+  race_malmo:{label:'Malmö HM',cat:'LOPP',cls:'p-race',tip:{tid:'Mål: sub 2:00:00',puls:'~178-190 bpm',fart:'~5:40/km',desc:'Mållopp sub 2:00. Starta Z4- (5:45/km) km 0-10, öka mot Z4+ km 10-18, ge allt sista 3 km.'}},
+  cykel_intervall:{label:'Cykling intervall',cat:'Cykel',cls:'p-interval',tip:{tid:'~30 min',puls:'Högintensivt',fart:'-',desc:'Högintensiva cykelintervaller som ersättning för löpning. Skonsamt för knäet.'}},
+  cykel_lang:{label:'Cykling långpass',cat:'Cykel',cls:'p-long',tip:{tid:'~3 h',puls:'Låg/medel',fart:'-',desc:'Långt cykelpass i låg till medelintensitet. Bra aerob träning utan belastning på knäet.'}},
+  cykel_lugn:{label:'Cykling lugn',cat:'Cykel',cls:'p-z2',tip:{tid:'~50 min',puls:'Låg intensitet',fart:'-',desc:'Lugnt cykelpass i låg intensitet. Aktiv återhämtning.'}}
 };
 
 // Each day is an array of session keys. Empty array = vila.
 const weeks=[
   {label:'Vecka 1',dates:'29 jun - 5 jul',tag:'normal',note:'Uppstart - knäkänningar (4 pass)',
    days:[['styrka'],['z2_40'],[],['int_z4m_kort'],[],[],['styrka']]},
-  {label:'Vecka 2',dates:'6 jul - 12 jul',tag:'deload',note:'Knät - cykling hela veckan (2 styrka)',
-   days:[[],['styrka'],[],['styrka'],[],[],[]]},
-  {label:'Vecka 3',dates:'13 jul - 19 jul',tag:'normal',note:'Försiktig återstart (4 pass)',
-   days:[['styrka'],['z2_30'],[],['int_z4m_kort'],[],['z2_40'],['styrka_kort']]},
-  {label:'Vecka 4 - Deload',dates:'20 jul - 26 jul',tag:'deload',note:'Deload - knä/höft-fokus (3-4 pass)',
+  {label:'Vecka 2',dates:'6 jul - 12 jul',tag:'normal',note:'Knät - cykling ersatte löpning (5 pass)',
+   days:[['cykel_intervall'],[],['styrka'],[],['styrka'],['cykel_lang'],['cykel_lugn']]},
+  {label:'Vecka 3 - Deload',dates:'13 jul - 19 jul',tag:'deload',note:'Deload - knä/höft-fokus (3-4 pass)',
    days:[['styrka'],['z2_30'],[],[],['optional'],['styrka_kort'],[]]},
+  {label:'Vecka 4',dates:'20 jul - 26 jul',tag:'normal',note:'Försiktig återstart (4 pass)',
+   days:[['styrka'],['z2_30'],[],['int_z4m_kort'],[],['z2_40'],['styrka_kort']]},
   {label:'Vecka 5',dates:'27 jul - 2 aug',tag:'normal',note:'Bygga upp - intervall + distans (4 pass)',
    days:[['styrka'],['z2_40'],['int_z4p_kort'],[],[],['z2_40'],['styrka_kort']]},
   {label:'Vecka 6',dates:'3 aug - 9 aug',tag:'normal',note:'3 löppass om knäet tillåter (5 pass)',
@@ -429,7 +432,6 @@ function render(){
 
     div.appendChild(daysList);
     container.appendChild(div);
-    if(wi<=1) toggleOpen(wi);
   });
   updateTotals();
 }
