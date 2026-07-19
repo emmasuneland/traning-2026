@@ -307,7 +307,9 @@ async function loadCloud(){
       if(d.record?.passNotes) passNotes=d.record.passNotes;
     }
   }catch(e){}
-  ensureState(); setSS(''); render();
+  ensureState(); setSS('');
+  // Rendera inte om modalen är öppen (användaren håller på med något)
+  if(!currentModal && currentWeekNote===null) render();
 }
 async function saveCloud(){
   if(syncing){pendingSave=true;return;}
@@ -534,6 +536,16 @@ function saveWeekNote(){
 }
 
 loadCloud();
+
+// Synka när sidan blir aktiv igen (byta flik/app)
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible') loadCloud();
+});
+
+// Auto-refresh var 30:e sekund
+setInterval(function(){
+  if(document.visibilityState === 'visible') loadCloud();
+}, 30000);
 </script>
 </body>
 </html>
