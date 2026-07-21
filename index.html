@@ -287,10 +287,14 @@ let state=weeks.map(w=>w.days.map(d=>d.map(()=>false)));
 let weekNotes={}, passNotes={};
 let syncing=false, pendingSave=false, currentModal=null, currentWeekNote=null;
 
+// weekDays är en muterbar kopia av days-strukturen (för flytt av pass)
+let weekDays=weeks.map(w=>w.days.map(d=>[...d]));
+
 function ensureState(){
   weeks.forEach((w,wi)=>{
-    if(!state[wi]) state[wi]=w.days.map(d=>d.map(()=>false));
-    w.days.forEach((d,di)=>{
+    if(!weekDays[wi]) weekDays[wi]=w.days.map(d=>[...d]);
+    if(!state[wi]) state[wi]=weekDays[wi].map(d=>d.map(()=>false));
+    weekDays[wi].forEach((d,di)=>{
       if(!state[wi][di]) state[wi][di]=d.map(()=>false);
       d.forEach((_,si)=>{ if(state[wi][di][si]===undefined) state[wi][di][si]=false; });
     });
@@ -305,10 +309,10 @@ async function loadCloud(){
       if(d.record?.state) state=d.record.state;
       if(d.record?.weekNotes) weekNotes=d.record.weekNotes;
       if(d.record?.passNotes) passNotes=d.record.passNotes;
+      if(d.record?.weekDays) weekDays=d.record.weekDays;
     }
   }catch(e){}
   ensureState(); setSS('');
-  // Rendera inte om modalen är öppen (användaren håller på med något)
   if(!currentModal && currentWeekNote===null) render();
 }
 async function saveCloud(){
@@ -316,7 +320,7 @@ async function saveCloud(){
   syncing=true; setSS('Sparar...');
   try{
     await fetch(BIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':BIN_KEY},
-      body:JSON.stringify({state,weekNotes,passNotes})});
+      body:JSON.stringify({state,weekNotes,passNotes,weekDays})});
     setSS('Sparat ✓'); setTimeout(()=>setSS(''),1500);
   }catch(e){ setSS('Fel'); }
   syncing=false; if(pendingSave){pendingSave=false;saveCloud();}
@@ -325,8 +329,8 @@ function save(){ saveCloud(); }
 
 function badgeCls(t){ return {normal:'b-normal',deload:'b-deload',taper:'b-taper',race:'b-race'}[t]; }
 function badgeLabel(t){ return {normal:'Träningsvecka',deload:'Deload',taper:'Taper',race:'Race Week'}[t]; }
-function countDone(wi){ let n=0; weeks[wi].days.forEach((d,di)=>d.forEach((k,si)=>{ if(k!=='vila'&&state[wi][di][si]) n++; })); return n; }
-function countTotal(wi){ let n=0; weeks[wi].days.forEach(d=>d.forEach(k=>{ if(k!=='vila') n++; })); return n; }
+function countDone(wi){ let n=0; weekDays[wi].forEach((d,di)=>d.forEach((k,si)=>{ if(k!=='vila'&&state[wi]?.[di]?.[si]) n++; })); return n; }
+function countTotal(wi){ let n=0; weekDays[wi].forEach(d=>d.forEach(k=>{ if(k!=='vila') n++; })); return n; }
 function updateTotals(){
   let a=0,t=0; weeks.forEach((_,wi)=>{a+=countDone(wi);t+=countTotal(wi);});
   document.getElementById('total-done').textContent=a+' / '+t;
@@ -385,7 +389,7 @@ function render(){
     daysList.className='days-list';
     daysList.id='days-'+wi;
 
-    week.days.forEach((daySessions,di)=>{
+    weekDays[wi].forEach((daySessions,di)=>{
       const row=document.createElement('div');
       row.className='day-row';
       const isEmpty=daySessions.length===0;
@@ -406,7 +410,7 @@ function render(){
     // Desktop grid
     const dGrid=document.createElement('div');
     dGrid.className='desktop-grid';
-    week.days.forEach((daySessions,di)=>{
+    weekDays[wi].forEach((daySessions,di)=>{
       const isEmpty=daySessions.length===0;
       const dcell=document.createElement('div');
       dcell.className='desktop-day';
@@ -450,7 +454,7 @@ function toggleOpen(wi){
 }
 
 function openModal(wi,di,si){
-  const key=weeks[wi].days[di][si];
+  const key=weekDays[wi][di][si];
   const sess=S[key]; const tip=sess.tip;
   const isDone=state[wi][di][si];
   const isRace=key==='race_hbg'||key==='race_malmo';
@@ -475,7 +479,7 @@ function openModal(wi,di,si){
   if(!isRace){
     moveSection.style.display='block'; picker.innerHTML='';
     DAYS.forEach((dayName,targetDi)=>{
-      const hasRace=weeks[wi].days[targetDi].some(k=>k==='race_hbg'||k==='race_malmo');
+      const hasRace=weekDays[wi][targetDi].some(k=>k==='race_hbg'||k==='race_malmo');
       const isCurrent=targetDi===di;
       const btn=document.createElement('button');
       btn.className='day-pick-btn'+(isCurrent?' current':'');
@@ -492,11 +496,11 @@ function openModal(wi,di,si){
 }
 
 function moveSession(wi,fromDi,si,toDi){
-  const key=weeks[wi].days[fromDi].splice(si,1)[0];
+  const key=weekDays[wi][fromDi].splice(si,1)[0];
   const doneval=state[wi][fromDi].splice(si,1)[0];
-  weeks[wi].days[toDi].push(key); state[wi][toDi].push(doneval);
+  weekDays[wi][toDi].push(key); state[wi][toDi].push(doneval);
   save(); render();
-  openModal(wi,toDi,weeks[wi].days[toDi].length-1);
+  openModal(wi,toDi,weekDays[wi][toDi].length-1);
 }
 
 function closeModal(e){
